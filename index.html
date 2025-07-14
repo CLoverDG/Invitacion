@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invitación</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('fondo.jpg') no-repeat center center fixed;
+      background-size: cover;
+      scroll-behavior: smooth;
+    }
+
+    .seccion {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      backdrop-filter: blur(1px);
+      padding: 2rem;
+    }
+
+    img {
+  max-width: 100%;
+  height: auto;
+  margin: 2rem 0;
+  display: block;
+  border-radius: 1rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1.5s ease-in-out;
+}
+
+
+    img.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .contenedor-superpuesto {
+      position: relative;
+      display: inline-block;
+    }
+
+    .overlay-mapa,
+    .overlay-boton,
+    .overlay-contador {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .overlay-mapa iframe {
+      width: 300vw;
+      max-width: 400px;
+      height: 400px;
+      border: none;
+      border-radius: 1rem;
+    }
+
+    .boton {
+      background-color: #584133;
+      color: white;
+      padding: 2rem 4rem;
+      font-size: 2rem;
+      border: none;
+      border-radius: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .boton:hover {
+      background-color: #584133;
+    }
+
+    .contador {
+      font-size: 4rem;
+      background-color: rgba(255,255,255,0.8);
+      padding: 4rem 5rem;
+      border-radius: 1rem;
+      color: #584133;
+      font-weight: bold;
+    }
+
+    /* Música oculta */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🎵 Música de fondo -->
+  <audio id="musica" loop>
+  <source src="musica.mp3" type="audio/mpeg" />
+  Tu navegador no soporta audio.
+</audio>
+
+<button id="boton-musica" style="
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 999;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #584133;
+  color: white;
+  cursor: pointer;
+">🎵 Activar música</button>
+
+<script>
+  document.getElementById('boton-musica').addEventListener('click', () => {
+    const audio = document.getElementById('musica');
+    audio.volume = 0.05; // 🔉 volumen bajo (0 = silencio, 1 = máximo)
+    audio.play();
+    document.getElementById('boton-musica').style.display = 'none';
+  });
+</script>
+
+  <!-- Imágenes normales -->
+  <div class="seccion"><img src="imagen1.jpg" /></div>
+  <div class="seccion"><img src="imagen2.jpg" /></div>
+  <div class="seccion"><img src="imagen3.jpg" /></div>
+  <div class="seccion"><img src="imagen4.jpg" /></div>
+  <div class="seccion"><img src="imagen5.jpg" /></div>
+
+  <!-- Imagen con mapa encima -->
+  <div class="seccion">
+    <div class="contenedor-superpuesto">
+      <img src="imagen6.jpg" />
+      <div class="overlay-mapa">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=TU_MAPA_AQUI"
+          allowfullscreen=""
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Imagen con botón encima -->
+  <div class="seccion">
+    <div class="contenedor-superpuesto">
+      <img src="imagen7.jpg" />
+      <div class="overlay-boton">
+        <a class="boton" href="https://wa.me/521XXXXXXXXXX?text=Confirmo%20mi%20asistencia" target="_blank">
+          Confirmar Asistencia
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Imagen con contador encima -->
+  <div class="seccion">
+    <div class="contenedor-superpuesto">
+      <img src="imagen8.jpg" />
+      <div class="overlay-contador">
+        <div id="contador" class="contador"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Efecto scroll animado
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    });
+
+    document.querySelectorAll('img').forEach(el => observer.observe(el));
+
+    // ⏳ Cuenta regresiva
+    const fechaEvento = new Date("2025-12-13T14:00:00").getTime(); // ← cambia si lo necesitas
+
+    function actualizarContador() {
+      const ahora = new Date().getTime();
+      const diferencia = fechaEvento - ahora;
+
+      if (diferencia <= 0) {
+        document.getElementById("contador").innerHTML = "¡Ha llegado el día!";
+        return;
+      }
+
+      const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+      document.getElementById("contador").innerHTML = `
+        ${dias} días, ${horas}h ${minutos}m ${segundos}s
+      `;
+    }
+
+    setInterval(actualizarContador, 1000);
+    actualizarContador(); // inicial
+  </script>
+
+</body>
+</html>
